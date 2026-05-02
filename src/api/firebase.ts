@@ -19,10 +19,7 @@ export const functions = getFunctions(app, "us-central1");
 
 // Connect to local emulator in development mode
 if (__DEV__) {
-  // Use '10.0.2.2' for Android Emulator, or your local IP for physical devices
-  // Since you are running Expo, 'localhost' works if you are on an iOS simulator, 
-  // but your local IP is safer for Expo Go. 
-  // For now, we'll try 'localhost' and you can update if using a physical device.
-  connectFunctionsEmulator(functions, "localhost", 5001);
-  console.log("Connected to Firebase Functions Emulator (localhost:5001)");
+  // Using your machine's LAN IP so your physical phone can connect
+  connectFunctionsEmulator(functions, "192.168.1.135", 5001);
+  console.log("Connected to Firebase Functions Emulator (192.168.1.135:5001)");
 }
