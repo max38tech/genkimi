@@ -1,4 +1,5 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import axios from "axios";
 
@@ -22,7 +23,7 @@ export const rakutenSearch = onCall(async (request) => {
   const accessKey = process.env.RAKUTEN_ACCESS_KEY;
   
   if (!appId || !accessKey) {
-    console.error("Rakuten credentials missing in environment variables.");
+    logger.error("Rakuten credentials missing in environment variables.");
     throw new HttpsError(
       "failed-precondition", 
       "Backend configuration missing: Rakuten App ID or Access Key."
@@ -33,7 +34,7 @@ export const rakutenSearch = onCall(async (request) => {
     // Using the Business API endpoint from the screenshot
     const url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260401";
     
-    console.log(`[Rakuten Business API] Searching: ${barcode}`);
+    logger.info(`[Rakuten Business API] Searching: ${barcode}`);
 
     const response = await axios.get(url, {
       params: {
@@ -84,7 +85,7 @@ export const rakutenSearch = onCall(async (request) => {
     };
 
   } catch (error: any) {
-    console.error("[Rakuten Error] Full Error:", error.response?.data || error.message);
+    logger.error("[Rakuten Error] Full Error:", error.response?.data || error.message);
     throw new HttpsError(
       "internal",
       `Rakuten API Failed: ${error.message}`
