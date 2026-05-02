@@ -1,4 +1,4 @@
-import * as functions from "firebase-functions";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import axios from "axios";
 
@@ -8,11 +8,11 @@ admin.initializeApp();
  * Rakuten Ichiba Item Search - Cloud Function
  * Moves the API call to the backend to protect the Application ID and inject Referer header.
  */
-export const rakutenSearch = functions.https.onCall(async (data, context) => {
-  const barcode = data.barcode;
+export const rakutenSearch = onCall(async (request) => {
+  const barcode = request.data.barcode;
   
   if (!barcode) {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "invalid-argument", 
       "The function must be called with a 'barcode' argument."
     );
@@ -24,7 +24,7 @@ export const rakutenSearch = functions.https.onCall(async (data, context) => {
   
   if (!appId) {
     console.error("RAKUTEN_APP_ID is not set in environment variables.");
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "failed-precondition", 
       "Backend configuration missing: Rakuten Application ID."
     );
@@ -86,7 +86,7 @@ export const rakutenSearch = functions.https.onCall(async (data, context) => {
 
   } catch (error: any) {
     console.error("Rakuten API Call Failed:", error.response?.data || error.message);
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "internal",
       "An error occurred while fetching data from Rakuten Ichiba."
     );

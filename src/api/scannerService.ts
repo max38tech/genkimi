@@ -140,18 +140,54 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
     const yahooProduct = yahooResult.status === 'fulfilled' ? yahooResult.value : null;
     const rakutenProduct = rakutenResult.status === 'fulfilled' ? rakutenResult.value : null;
 
+    // DEBUG: Log Rakuten results for testing
+    console.log('--- Rakuten Test Data ---');
+    console.log('Barcode:', barcode);
+    if (rakutenProduct) {
+      console.log('Name:', rakutenProduct.name);
+      console.log('Has Ingredients:', !!rakutenProduct.ingredients);
+      console.log('Caption Length:', rakutenProduct.ingredients?.length || 0);
+      // console.log('Raw Caption:', rakutenProduct.ingredients); // Uncomment to see full text
+    } else {
+      console.log('Rakuten: No product found.');
+    }
+    console.log('-------------------------');
+
     // If we have nothing, throw error
     if (!offProduct && !yahooProduct && !rakutenProduct) {
       throw new Error('Product not found in any database');
     }
 
-    // Determine the base product info (Name and Image)
-    // Priority: Yahoo -> Rakuten -> Open Food Facts
-    const baseInfo = yahooProduct || rakutenProduct || {
+    // TEST MODE: Prioritize Rakuten -> Yahoo -> OFF
+    const baseInfo = rakutenProduct || yahooProduct || {
       name: offProduct?.product_name_ja || offProduct?.product_name_en || offProduct?.product_name || 'Unknown Product',
       image: offProduct?.image_url || offProduct?.image_front_url || 'https://via.placeholder.com/400',
       category: 'Unknown'
     };
+
+    if (rakutenProduct) {
+      // If we have Rakuten data, let's try to use it primarily for testing
+      let ingredientsList: Ingredient[] = [];
+      if (rakutenProduct.ingredients) {
+        // Simple split for now to see what we get
+        ingredientsList = rakutenProduct.ingredients.split(/[、,。\n]/).map((text: string, index: number) => ({
+          id: `rakuten-${index}`,
+          name: text.trim(),
+          safety: 'caution' as const
+        })).filter((i: any) => i.name.length > 1 && i.name.length < 50);
+      }
+
+      return {
+        code: barcode,
+        name: rakutenProduct.name,
+        image: rakutenProduct.image,
+        score: offProduct ? 50 : null, // Still use OFF for score if available, otherwise null
+        category: 'Rakuten Product',
+        ingredients: ingredientsList,
+        alternatives: [],
+        isPartialData: !offProduct
+      };
+    }
 
     if (offProduct) {
       // Calculate a more accurate score based on nutriscore, nova group, or ecoscore
@@ -214,25 +250,14 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
         isPartialData: false
       };
     } else {
-      // Partial Data State
-      // Parse Rakuten ingredients if available
-      let ingredientsList: Ingredient[] = [];
-      if (rakutenProduct?.ingredients) {
-        // Split by common Japanese delimiters
-        ingredientsList = rakutenProduct.ingredients.split(/[、,。\n]/).map((text: string, index: number) => ({
-          id: `rakuten-${index}`,
-          name: text.trim(),
-          safety: 'caution' as const
-        })).filter((i: any) => i.name.length > 1); // Filter out very short or empty strings
-      }
-
+      // Partial Data State (e.g. only Yahoo results found)
       return {
         code: barcode,
         name: baseInfo.name,
         image: baseInfo.image,
         score: null,
         category: baseInfo.category || 'Unknown Category',
-        ingredients: ingredientsList,
+        ingredients: [], // No ingredients if we only have Yahoo
         alternatives: [],
         isPartialData: true
       };
