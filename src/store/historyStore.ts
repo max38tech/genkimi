@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProductData } from '../api/scannerService';
 
-const HISTORY_KEY = '@healthscanner_history';
+const HISTORY_KEY = '@genkimi_history';
 
 export interface HistoryItem extends ProductData {
   scannedAt: number;
