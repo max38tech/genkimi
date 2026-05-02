@@ -48,23 +48,21 @@ exports.rakutenSearch = (0, https_1.onCall)(async (request) => {
         throw new https_1.HttpsError("invalid-argument", "The function must be called with a 'barcode' argument.");
     }
     const appId = process.env.RAKUTEN_APP_ID;
-    if (!appId) {
-        console.error("RAKUTEN_APP_ID is not set in environment variables.");
-        throw new https_1.HttpsError("failed-precondition", "Backend configuration missing: Rakuten Application ID.");
+    const accessKey = process.env.RAKUTEN_ACCESS_KEY;
+    if (!appId || !accessKey) {
+        console.error("Rakuten credentials missing in environment variables.");
+        throw new https_1.HttpsError("failed-precondition", "Backend configuration missing: Rakuten App ID or Access Key.");
     }
     try {
-        const url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601";
-        console.log(`[Rakuten] Searching for barcode: ${barcode}`);
-        console.log(`[Rakuten] Using AppID ending in: ...${appId.slice(-4)}`);
+        const url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260401";
+        console.log(`[Rakuten Business API] Searching: ${barcode}`);
         const response = await axios_1.default.get(url, {
             params: {
                 applicationId: appId,
+                accessKey: accessKey,
                 keyword: barcode,
-                hits: 10,
                 format: "json",
-            },
-            headers: {
-                "Referer": "https://genkimi.app"
+                hits: 10
             }
         });
         const items = response.data.Items || [];
