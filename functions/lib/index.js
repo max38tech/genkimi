@@ -54,6 +54,8 @@ exports.rakutenSearch = (0, https_1.onCall)(async (request) => {
     }
     try {
         const url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601";
+        console.log(`[Rakuten] Searching for barcode: ${barcode}`);
+        console.log(`[Rakuten] Using AppID ending in: ...${appId.slice(-4)}`);
         const response = await axios_1.default.get(url, {
             params: {
                 applicationId: appId,
@@ -97,8 +99,8 @@ exports.rakutenSearch = (0, https_1.onCall)(async (request) => {
         };
     }
     catch (error) {
-        console.error("Rakuten API Call Failed:", ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message);
-        throw new https_1.HttpsError("internal", "An error occurred while fetching data from Rakuten Ichiba.");
+        console.error("[Rakuten Error] Full Error:", ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message);
+        throw new https_1.HttpsError("internal", `Rakuten API Failed: ${error.message}`);
     }
 });
 //# sourceMappingURL=index.js.map

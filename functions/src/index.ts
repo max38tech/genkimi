@@ -18,31 +18,30 @@ export const rakutenSearch = onCall(async (request) => {
     );
   }
 
-  // The Rakuten Application ID should be set in the Firebase environment
-  // e.g., firebase functions:secrets:set RAKUTEN_APP_ID=your_id
   const appId = process.env.RAKUTEN_APP_ID;
+  const accessKey = process.env.RAKUTEN_ACCESS_KEY;
   
-  if (!appId) {
-    console.error("RAKUTEN_APP_ID is not set in environment variables.");
+  if (!appId || !accessKey) {
+    console.error("Rakuten credentials missing in environment variables.");
     throw new HttpsError(
       "failed-precondition", 
-      "Backend configuration missing: Rakuten Application ID."
+      "Backend configuration missing: Rakuten App ID or Access Key."
     );
   }
 
   try {
-    const url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601";
+    // Using the Business API endpoint from the screenshot
+    const url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260401";
     
-    // We fetch up to 10 items to find one with complete data
+    console.log(`[Rakuten Business API] Searching: ${barcode}`);
+
     const response = await axios.get(url, {
       params: {
         applicationId: appId,
+        accessKey: accessKey,
         keyword: barcode,
-        hits: 10,
         format: "json",
-      },
-      headers: {
-        "Referer": "https://genkimi.app"
+        hits: 10
       }
     });
 
@@ -85,10 +84,10 @@ export const rakutenSearch = onCall(async (request) => {
     };
 
   } catch (error: any) {
-    console.error("Rakuten API Call Failed:", error.response?.data || error.message);
+    console.error("[Rakuten Error] Full Error:", error.response?.data || error.message);
     throw new HttpsError(
       "internal",
-      "An error occurred while fetching data from Rakuten Ichiba."
+      `Rakuten API Failed: ${error.message}`
     );
   }
 });

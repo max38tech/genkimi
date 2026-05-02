@@ -1,27 +1,27 @@
-[debug] [2026-05-02T11:40:24.970Z] ----------------------------------------------------------------------
-[debug] [2026-05-02T11:40:24.972Z] Command:       /home/shawn/.nvm/versions/node/v24.10.0/bin/node /home/shawn/.nvm/versions/node/v24.10.0/bin/firebase emulators:start --only functions
-[debug] [2026-05-02T11:40:24.972Z] CLI Version:   15.9.0
-[debug] [2026-05-02T11:40:24.972Z] Platform:      linux
-[debug] [2026-05-02T11:40:24.972Z] Node Version:  v24.10.0
-[debug] [2026-05-02T11:40:24.973Z] Time:          Sat May 02 2026 20:40:24 GMT+0900 (Japan Standard Time)
-[debug] [2026-05-02T11:40:24.973Z] ----------------------------------------------------------------------
+[debug] [2026-05-02T11:46:36.209Z] ----------------------------------------------------------------------
+[debug] [2026-05-02T11:46:36.211Z] Command:       /home/shawn/.nvm/versions/node/v24.10.0/bin/node /home/shawn/.nvm/versions/node/v24.10.0/bin/firebase emulators:start --only functions
+[debug] [2026-05-02T11:46:36.211Z] CLI Version:   15.9.0
+[debug] [2026-05-02T11:46:36.211Z] Platform:      linux
+[debug] [2026-05-02T11:46:36.211Z] Node Version:  v24.10.0
+[debug] [2026-05-02T11:46:36.212Z] Time:          Sat May 02 2026 20:46:36 GMT+0900 (Japan Standard Time)
+[debug] [2026-05-02T11:46:36.212Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2026-05-02T11:40:25.745Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2026-05-02T11:40:25.745Z] > authorizing via signed-in user (shawn.shiobara@gmail.com)
+[debug] [2026-05-02T11:46:37.049Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-02T11:46:37.050Z] > authorizing via signed-in user (shawn.shiobara@gmail.com)
 [info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
 [info] i  emulators: Detected demo project ID "demo-no-project", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail. {"metadata":{"emulator":{"name":"hub"},"message":"Detected demo project ID \"demo-no-project\", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail."}}
-[debug] [2026-05-02T11:40:25.755Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2026-05-02T11:40:25.755Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
-[debug] [2026-05-02T11:40:25.763Z] Write emulator hub locator at /tmp/hub-demo-no-project.json
-[debug] [2026-05-02T11:40:25.770Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2026-05-02T11:40:25.770Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2026-05-02T11:40:25.771Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2026-05-02T11:40:25.771Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
-[debug] [2026-05-02T11:40:25.830Z] defaultcredentials: writing to file /home/shawn/.config/firebase/shawn_shiobara_gmail.com_application_default_credentials.json
-[debug] [2026-05-02T11:40:25.832Z] Setting GAC to /home/shawn/.config/firebase/shawn_shiobara_gmail.com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to /home/shawn/.config/firebase/shawn_shiobara_gmail.com_application_default_credentials.json"}}
+[debug] [2026-05-02T11:46:37.056Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-05-02T11:46:37.056Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2026-05-02T11:46:37.062Z] Write emulator hub locator at /tmp/hub-demo-no-project.json
+[debug] [2026-05-02T11:46:37.067Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-05-02T11:46:37.067Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-05-02T11:46:37.067Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-05-02T11:46:37.068Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[debug] [2026-05-02T11:46:37.156Z] defaultcredentials: writing to file /home/shawn/.config/firebase/shawn_shiobara_gmail.com_application_default_credentials.json
+[debug] [2026-05-02T11:46:37.158Z] Setting GAC to /home/shawn/.config/firebase/shawn_shiobara_gmail.com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to /home/shawn/.config/firebase/shawn_shiobara_gmail.com_application_default_credentials.json"}}
 [info] i  functions: Watching "/home/shawn/Documents/CODE.LCL/GenkiMi/functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"/home/shawn/Documents/CODE.LCL/GenkiMi/functions\" for Cloud Functions..."}}
-[debug] [2026-05-02T11:40:25.855Z] Validating nodejs source
-[debug] [2026-05-02T11:40:26.497Z] > [functions] package.json contents: {
+[debug] [2026-05-02T11:46:37.179Z] Validating nodejs source
+[debug] [2026-05-02T11:46:37.703Z] > [functions] package.json contents: {
   "name": "functions",
   "version": "1.0.0",
   "description": "",
@@ -49,18 +49,18 @@
     "typescript": "^6.0.3"
   }
 }
-[debug] [2026-05-02T11:40:26.498Z] Building nodejs source
-[debug] [2026-05-02T11:40:26.498Z] Failed to find version of module node: reached end of search path /home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules
+[debug] [2026-05-02T11:46:37.703Z] Building nodejs source
+[debug] [2026-05-02T11:46:37.704Z] Failed to find version of module node: reached end of search path /home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules
 [info] ✔  functions: Using node@24 from host. 
 [info] i  functions: Loaded environment variables from .env. 
-[debug] [2026-05-02T11:40:26.507Z] Could not find functions.yaml. Must use http discovery
-[debug] [2026-05-02T11:40:26.512Z] Found firebase-functions binary at '/home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules/.bin/firebase-functions'
-[info] Serving at port 8510
+[debug] [2026-05-02T11:46:37.709Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-05-02T11:46:37.714Z] Found firebase-functions binary at '/home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8276
 
-[debug] [2026-05-02T11:40:26.803Z] Got response from /__/functions.yaml {"endpoints":{"rakutenSearch":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"callableTrigger":{},"entryPoint":"rakutenSearch"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[debug] [2026-05-02T11:46:38.026Z] Got response from /__/functions.yaml {"endpoints":{"rakutenSearch":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"callableTrigger":{},"entryPoint":"rakutenSearch"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
 [info] ✔  functions: Loaded functions definitions from source: rakutenSearch. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: rakutenSearch."}}
 [info] ✔  functions[us-central1-rakutenSearch]: http function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/rakutenSearch). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/rakutenSearch)."}}
-[debug] [2026-05-02T11:40:30.834Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: connect ECONNREFUSED 127.0.0.1:40001. If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[debug] [2026-05-02T11:46:42.057Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: connect ECONNREFUSED 127.0.0.1:40001. If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
 [info] 
 ┌─────────────────────────────────────────────────────────────┐
 │ ✔  All emulators ready! It is now safe to connect your app. │
@@ -77,3 +77,83 @@
 
 Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
  
+[debug] [2026-05-02T11:48:08.753Z] File /home/shawn/Documents/CODE.LCL/GenkiMi/functions/src/index.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /home/shawn/Documents/CODE.LCL/GenkiMi/functions/src/index.ts changed, reloading triggers"}}
+[debug] [2026-05-02T11:48:09.754Z] Validating nodejs source
+[debug] [2026-05-02T11:48:10.263Z] > [functions] package.json contents: {
+  "name": "functions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.15.2",
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "^7.2.5"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.4.1",
+    "typescript": "^6.0.3"
+  }
+}
+[debug] [2026-05-02T11:48:10.264Z] Building nodejs source
+[debug] [2026-05-02T11:48:10.264Z] Failed to find version of module node: reached end of search path /home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules
+[info] ✔  functions: Using node@24 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2026-05-02T11:48:10.266Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-05-02T11:48:10.267Z] Found firebase-functions binary at '/home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8854
+
+[debug] [2026-05-02T11:48:10.580Z] Got response from /__/functions.yaml {"endpoints":{"rakutenSearch":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"callableTrigger":{},"entryPoint":"rakutenSearch"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] ✔  functions: Loaded functions definitions from source: rakutenSearch. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: rakutenSearch."}}
+[debug] [2026-05-02T11:48:23.094Z] File /home/shawn/Documents/CODE.LCL/GenkiMi/functions/src/index.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File /home/shawn/Documents/CODE.LCL/GenkiMi/functions/src/index.ts changed, reloading triggers"}}
+[debug] [2026-05-02T11:48:24.095Z] Validating nodejs source
+[debug] [2026-05-02T11:48:24.618Z] > [functions] package.json contents: {
+  "name": "functions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.15.2",
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "^7.2.5"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.4.1",
+    "typescript": "^6.0.3"
+  }
+}
+[debug] [2026-05-02T11:48:24.618Z] Building nodejs source
+[debug] [2026-05-02T11:48:24.618Z] Failed to find version of module node: reached end of search path /home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules
+[info] ✔  functions: Using node@24 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2026-05-02T11:48:24.620Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-05-02T11:48:24.622Z] Found firebase-functions binary at '/home/shawn/Documents/CODE.LCL/GenkiMi/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8875
+
+[debug] [2026-05-02T11:48:24.931Z] Got response from /__/functions.yaml {"endpoints":{"rakutenSearch":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"callableTrigger":{},"entryPoint":"rakutenSearch"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] ✔  functions: Loaded functions definitions from source: rakutenSearch. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: rakutenSearch."}}
