@@ -42,8 +42,13 @@ const logger = __importStar(require("firebase-functions/logger"));
 const admin = __importStar(require("firebase-admin"));
 const axios_1 = __importDefault(require("axios"));
 admin.initializeApp();
-exports.rakutenSearch = (0, https_1.onCall)(async (request) => {
+exports.rakutenSearch = (0, https_1.onCall)({
+    cors: true,
+    region: "us-central1"
+}, async (request) => {
     var _a, _b, _c;
+    logger.info(">>> Rakuten Search Function Triggered <<<");
+    logger.info("Data received:", request.data);
     const barcode = request.data.barcode;
     if (!barcode) {
         throw new https_1.HttpsError("invalid-argument", "The function must be called with a 'barcode' argument.");

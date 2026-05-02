@@ -15,7 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Cloud Functions
-export const functions = getFunctions(app);
+export const functions = getFunctions(app, "us-central1");
 
 // Connect to local emulator in development mode
 if (__DEV__) {

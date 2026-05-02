@@ -9,7 +9,13 @@ admin.initializeApp();
  * Rakuten Ichiba Item Search - Cloud Function
  * Moves the API call to the backend to protect the Application ID and inject Referer header.
  */
-export const rakutenSearch = onCall(async (request) => {
+export const rakutenSearch = onCall({ 
+  cors: true,
+  region: "us-central1" 
+}, async (request) => {
+  logger.info(">>> Rakuten Search Function Triggered <<<");
+  logger.info("Data received:", request.data);
+
   const barcode = request.data.barcode;
   
   if (!barcode) {
