@@ -38,6 +38,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rakutenSearch = void 0;
 const https_1 = require("firebase-functions/v2/https");
+const logger = __importStar(require("firebase-functions/logger"));
 const admin = __importStar(require("firebase-admin"));
 const axios_1 = __importDefault(require("axios"));
 admin.initializeApp();
@@ -50,12 +51,12 @@ exports.rakutenSearch = (0, https_1.onCall)(async (request) => {
     const appId = process.env.RAKUTEN_APP_ID;
     const accessKey = process.env.RAKUTEN_ACCESS_KEY;
     if (!appId || !accessKey) {
-        console.error("Rakuten credentials missing in environment variables.");
+        logger.error("Rakuten credentials missing in environment variables.");
         throw new https_1.HttpsError("failed-precondition", "Backend configuration missing: Rakuten App ID or Access Key.");
     }
     try {
         const url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260401";
-        console.log(`[Rakuten Business API] Searching: ${barcode}`);
+        logger.info(`[Rakuten Business API] Searching: ${barcode}`);
         const response = await axios_1.default.get(url, {
             params: {
                 applicationId: appId,
@@ -97,7 +98,7 @@ exports.rakutenSearch = (0, https_1.onCall)(async (request) => {
         };
     }
     catch (error) {
-        console.error("[Rakuten Error] Full Error:", ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message);
+        logger.error("[Rakuten Error] Full Error:", ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message);
         throw new https_1.HttpsError("internal", `Rakuten API Failed: ${error.message}`);
     }
 });
