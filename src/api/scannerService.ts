@@ -1,3 +1,6 @@
+import { httpsCallable } from 'firebase/functions';
+import { functions } from './firebase';
+
 export interface ProductData {
   code: string;
   name: string;
@@ -74,24 +77,24 @@ const fetchFromYahoo = async (barcode: string) => {
   return null;
 };
 
-// Helper to fetch from Rakuten Ichiba API
+// Helper to fetch from Rakuten Ichiba API via Cloud Function
 const fetchFromRakuten = async (barcode: string) => {
-  const appId = process.env.EXPO_PUBLIC_RAKUTEN_APP_ID;
-  if (!appId) return null;
   try {
-    const res = await fetch(`https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId=${appId}&keyword=${barcode}&hits=1`);
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data.Items && data.Items.length > 0) {
-      const item = data.Items[0].Item;
+    const rakutenSearch = httpsCallable(functions, 'rakutenSearch');
+    const result = await rakutenSearch({ barcode });
+    const responseData = result.data as any;
+
+    if (responseData.success && responseData.data) {
+      const item = responseData.data;
       return {
-        name: item.itemName,
-        image: item.mediumImageUrls?.[0]?.imageUrl || 'https://via.placeholder.com/400',
+        name: item.name,
+        image: item.imageUrl,
+        ingredients: item.ingredients,
         category: 'Unknown',
       };
     }
   } catch (e) {
-    console.warn('Rakuten API error:', e);
+    console.warn('Rakuten Cloud Function error:', e);
   }
   return null;
 };
@@ -212,13 +215,24 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
       };
     } else {
       // Partial Data State
+      // Parse Rakuten ingredients if available
+      let ingredientsList: Ingredient[] = [];
+      if (rakutenProduct?.ingredients) {
+        // Split by common Japanese delimiters
+        ingredientsList = rakutenProduct.ingredients.split(/[、,。\n]/).map((text: string, index: number) => ({
+          id: `rakuten-${index}`,
+          name: text.trim(),
+          safety: 'caution' as const
+        })).filter((i: any) => i.name.length > 1); // Filter out very short or empty strings
+      }
+
       return {
         code: barcode,
         name: baseInfo.name,
         image: baseInfo.image,
         score: null,
         category: baseInfo.category || 'Unknown Category',
-        ingredients: [],
+        ingredients: ingredientsList,
         alternatives: [],
         isPartialData: true
       };
