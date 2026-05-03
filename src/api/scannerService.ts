@@ -175,6 +175,7 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
       return 'caution';
     };
 
+    let ingredientsList: Ingredient[] = [];
     if (rakutenProduct && rakutenProduct.ingredients) {
       ingredientsList = rakutenProduct.ingredients.split(/[、,。\n]/).map((text: string, index: number) => {
         const name = text.trim();
