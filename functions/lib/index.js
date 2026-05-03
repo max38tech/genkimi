@@ -42,12 +42,57 @@ const logger = __importStar(require("firebase-functions/logger"));
 const admin = __importStar(require("firebase-admin"));
 const axios_1 = __importDefault(require("axios"));
 admin.initializeApp();
+function extractIngredients(caption) {
+    if (!caption)
+        return "";
+    const startPatterns = [
+        /[■【]?原材料名?[】]?\s*[：:／\/]?\s*/,
+    ];
+    let ingredientsStart = -1;
+    let matchLength = 0;
+    for (const pattern of startPatterns) {
+        const match = caption.match(pattern);
+        if (match && match.index !== undefined) {
+            ingredientsStart = match.index + match[0].length;
+            matchLength = match[0].length;
+            break;
+        }
+    }
+    if (ingredientsStart === -1)
+        return "";
+    const afterMarker = caption.substring(ingredientsStart);
+    const endPatterns = [
+        /\s*[■【]/,
+        /\s*栄養成分/,
+        /\s*内容[量カ]/,
+        /\s*保存方法/,
+        /\s*賞味期[限間]/,
+        /\s*販売者/,
+        /\s*製造者/,
+        /\s*名称\s/,
+        /\s*備考/,
+        /\s*アレルギー/,
+        /\s*(?:※|【)/,
+        /\s*JANコード/,
+    ];
+    let endIndex = afterMarker.length;
+    for (const pattern of endPatterns) {
+        const match = afterMarker.match(pattern);
+        if (match && match.index !== undefined && match.index < endIndex) {
+            endIndex = match.index;
+        }
+    }
+    let ingredientsText = afterMarker.substring(0, endIndex).trim();
+    ingredientsText = ingredientsText.replace(/^[、,\s]+|[、,\s]+$/g, "");
+    logger.info(`[Ingredients Extracted] "${ingredientsText}"`);
+    return ingredientsText;
+}
 exports.rakutenSearch = (0, https_1.onCall)({
     cors: true,
     region: "us-central1",
     invoker: "public"
 }, async (request) => {
-    var _a, _b, _c;
+    var _a, _b;
     logger.info(">>> Rakuten Search Function Triggered <<<");
     logger.info("Data received:", request.data);
     const barcode = request.data.barcode;
@@ -81,23 +126,30 @@ exports.rakutenSearch = (0, https_1.onCall)({
         for (const itemWrapper of items) {
             const item = itemWrapper.Item;
             const hasImage = item.mediumImageUrls && item.mediumImageUrls.length > 0;
-            const hasCaption = item.itemCaption && item.itemCaption.trim().length > 0;
-            if (hasImage && hasCaption) {
+            const caption = item.itemCaption || "";
+            const ingredients = extractIngredients(caption);
+            if (hasImage && ingredients.length > 0) {
                 finalItem = {
                     name: item.itemName,
                     imageUrl: item.mediumImageUrls[0].imageUrl,
-                    ingredients: item.itemCaption,
+                    ingredients: ingredients,
                 };
                 break;
             }
         }
-        if (!finalItem && items.length > 0) {
-            const firstItem = items[0].Item;
-            finalItem = {
-                name: firstItem.itemName,
-                imageUrl: ((_b = (_a = firstItem.mediumImageUrls) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.imageUrl) || "https://via.placeholder.com/400",
-                ingredients: firstItem.itemCaption || "",
-            };
+        if (!finalItem) {
+            for (const itemWrapper of items) {
+                const item = itemWrapper.Item;
+                const hasImage = item.mediumImageUrls && item.mediumImageUrls.length > 0;
+                if (hasImage) {
+                    finalItem = {
+                        name: item.itemName,
+                        imageUrl: ((_a = item.mediumImageUrls[0]) === null || _a === void 0 ? void 0 : _a.imageUrl) || "https://via.placeholder.com/400",
+                        ingredients: extractIngredients(item.itemCaption || ""),
+                    };
+                    break;
+                }
+            }
         }
         if (!finalItem) {
             return { success: false, message: "No product found on Rakuten." };
@@ -108,7 +160,7 @@ exports.rakutenSearch = (0, https_1.onCall)({
         };
     }
     catch (error) {
-        logger.error("[Rakuten Error] Full Error:", ((_c = error.response) === null || _c === void 0 ? void 0 : _c.data) || error.message);
+        logger.error("[Rakuten Error] Full Error:", ((_b = error.response) === null || _b === void 0 ? void 0 : _b.data) || error.message);
         throw new https_1.HttpsError("internal", `Rakuten API Failed: ${error.message}`);
     }
 });
