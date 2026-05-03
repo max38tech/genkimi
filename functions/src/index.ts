@@ -40,6 +40,7 @@ function extractIngredients(caption: string): string {
     /\s*[■【]/,                    // Next section marker ■ or 【
     /\s*栄養成分/,                  // Nutrition facts
     /\s*内容[量カ]/,                // Contents
+    /\s*容\s*量/,                   // Volume/quantity (容　量 with full-width space)
     /\s*保存方法/,                  // Storage method
     /\s*賞味期[限間]/,              // Expiration
     /\s*販売者/,                    // Seller
@@ -49,6 +50,11 @@ function extractIngredients(caption: string): string {
     /\s*アレルギー/,                // Allergy info (separate from ingredients)
     /\s*(?:※|【)/,                 // Disclaimers or bracket sections
     /\s*JANコード/,                // JAN code (if it appears after)
+    /\s*タイプ/,                    // Product type
+    /\s*種類別/,                    // Category
+    /\s*カロリー/,                  // Calories
+    /\s*希望小売/,                  // Suggested retail price
+    /\s*商品説明/,                  // Product description
   ];
 
   let endIndex = afterMarker.length;
@@ -61,8 +67,8 @@ function extractIngredients(caption: string): string {
 
   let ingredientsText = afterMarker.substring(0, endIndex).trim();
 
-  // Clean up: remove trailing/leading punctuation and whitespace
-  ingredientsText = ingredientsText.replace(/^[、,\s]+|[、,\s]+$/g, "");
+  // Clean up: remove trailing/leading punctuation, decorative symbols, and whitespace
+  ingredientsText = ingredientsText.replace(/^[、,\s●◆◇▲△▼▽★☆・]+|[、,\s●◆◇▲△▼▽★☆・]+$/g, "");
 
   logger.info(`[Ingredients Extracted] "${ingredientsText}"`);
   return ingredientsText;

@@ -81,28 +81,29 @@ export const ProductDetailScreen = () => {
         </View>
 
         {/* Ingredients Section */}
-        {product.isPartialData ? (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Ingredients</Text>
+          {product.ingredients && product.ingredients.length > 0 ? (
+            product.ingredients.map(ingredient => (
+              <IngredientItem key={ingredient.id} ingredient={ingredient} />
+            ))
+          ) : (
+            <Text style={styles.emptyText}>No ingredient data available.</Text>
+          )}
+        </View>
+
+        {/* Upsell Section for Partial Data */}
+        {product.isPartialData && (
           <View style={styles.section}>
             <View style={styles.upsellContainer}>
-              <Text style={styles.upsellTitle}>Health Data Unavailable</Text>
+              <Text style={styles.upsellTitle}>Health Analysis Unavailable</Text>
               <Text style={styles.upsellText}>
-                We found this product, but no health information is available. Upgrade to Premium to scan the ingredient label directly with AI.
+                We found this product's ingredients, but health scoring is unavailable. Upgrade to Premium to analyze these ingredients with AI.
               </Text>
               <TouchableOpacity style={styles.premiumButton}>
-                <Text style={styles.premiumButtonText}>✨ Scan with AI (Premium)</Text>
+                <Text style={styles.premiumButtonText}>✨ Analyze with AI (Premium)</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        ) : (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ingredients</Text>
-            {product.ingredients.length > 0 ? (
-              product.ingredients.map(ingredient => (
-                <IngredientItem key={ingredient.id} ingredient={ingredient} />
-              ))
-            ) : (
-              <Text style={styles.emptyText}>No ingredient data available.</Text>
-            )}
           </View>
         )}
 

@@ -65,6 +65,7 @@ function extractIngredients(caption) {
         /\s*[■【]/,
         /\s*栄養成分/,
         /\s*内容[量カ]/,
+        /\s*容\s*量/,
         /\s*保存方法/,
         /\s*賞味期[限間]/,
         /\s*販売者/,
@@ -74,6 +75,11 @@ function extractIngredients(caption) {
         /\s*アレルギー/,
         /\s*(?:※|【)/,
         /\s*JANコード/,
+        /\s*タイプ/,
+        /\s*種類別/,
+        /\s*カロリー/,
+        /\s*希望小売/,
+        /\s*商品説明/,
     ];
     let endIndex = afterMarker.length;
     for (const pattern of endPatterns) {
@@ -83,7 +89,7 @@ function extractIngredients(caption) {
         }
     }
     let ingredientsText = afterMarker.substring(0, endIndex).trim();
-    ingredientsText = ingredientsText.replace(/^[、,\s]+|[、,\s]+$/g, "");
+    ingredientsText = ingredientsText.replace(/^[、,\s●◆◇▲△▼▽★☆・]+|[、,\s●◆◇▲△▼▽★☆・]+$/g, "");
     logger.info(`[Ingredients Extracted] "${ingredientsText}"`);
     return ingredientsText;
 }
