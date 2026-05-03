@@ -11,7 +11,8 @@ admin.initializeApp();
  */
 export const rakutenSearch = onCall({ 
   cors: true,
-  region: "us-central1" 
+  region: "us-central1",
+  invoker: "public"
 }, async (request) => {
   logger.info(">>> Rakuten Search Function Triggered <<<");
   logger.info("Data received:", request.data);
