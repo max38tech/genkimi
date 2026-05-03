@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react-native';
 import { Ingredient } from '../api/scannerService';
 import { colors, spacing, typography } from '../theme/colors';
@@ -31,8 +31,33 @@ export const IngredientItem: React.FC<IngredientItemProps> = ({ ingredient }) =>
     }
   };
 
+  const handlePress = () => {
+    let title = '';
+    let message = '';
+    
+    switch (ingredient.safety) {
+      case 'warning':
+        title = '⚠️ Warning';
+        message = `${ingredient.name} is flagged as a potential health concern. This is typically due to high sugar, artificial additives, or preservatives.`;
+        break;
+      case 'safe':
+        title = '✅ Safe';
+        message = `${ingredient.name} is considered a healthy or safe ingredient (like whole foods, nuts, fruits, and vegetables).`;
+        break;
+      case 'caution':
+        title = '⚠️ Caution';
+        message = `${ingredient.name} is generally okay, but should be consumed in moderation.`;
+        break;
+    }
+    
+    Alert.alert(title, message);
+  };
+
   return (
-    <View style={[styles.container, { borderLeftColor: ingredient.safety === 'warning' ? colors.error : ingredient.safety === 'caution' ? colors.warning : colors.success }]}>
+    <TouchableOpacity 
+      style={[styles.container, { borderLeftColor: ingredient.safety === 'warning' ? colors.error : ingredient.safety === 'caution' ? colors.warning : colors.success }]}
+      onPress={handlePress}
+    >
       <View style={[styles.iconContainer, { backgroundColor: getBackgroundColor() }]}>
         {getIcon()}
       </View>
@@ -42,7 +67,7 @@ export const IngredientItem: React.FC<IngredientItemProps> = ({ ingredient }) =>
           <Text style={styles.description}>{ingredient.description}</Text>
         )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -190,9 +190,17 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
         }).filter((i: any) => i.name.length > 1 && i.name.length < 50);
       }
 
+      const cleanNameRakuten = rakutenProduct.name
+        .replace(/【[^】]*】/g, '') // remove 【...】
+        .replace(/\[[^\]]*\]/g, '') // remove [...]
+        .replace(/〔[^〕]*〕/g, '') // remove 〔...〕
+        .replace(/★[^★]*★/g, '')   // remove ★...★
+        .replace(/※[^※]*※/g, '')   // remove ※...※
+        .trim();
+
       return {
         code: barcode,
-        name: rakutenProduct.name,
+        name: cleanNameRakuten,
         image: rakutenProduct.image,
         score: offProduct ? 50 : null, // Still use OFF for score if available, otherwise null
         category: 'Rakuten Product',
@@ -302,9 +310,18 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
         }
       }
 
+      // Clean up promotional text from product name
+      const cleanName = baseInfo.name
+        .replace(/【[^】]*】/g, '') // remove 【...】
+        .replace(/\[[^\]]*\]/g, '') // remove [...]
+        .replace(/〔[^〕]*〕/g, '') // remove 〔...〕
+        .replace(/★[^★]*★/g, '')   // remove ★...★
+        .replace(/※[^※]*※/g, '')   // remove ※...※
+        .trim();
+
       return {
         code: barcode,
-        name: baseInfo.name,
+        name: cleanName,
         image: baseInfo.image,
         score: calculatedScore,
         category: mainCategoryFormatted,
@@ -314,9 +331,17 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
       };
     } else {
       // Partial Data State (e.g. only Yahoo results found)
+      const cleanNamePartial = baseInfo.name
+        .replace(/【[^】]*】/g, '') // remove 【...】
+        .replace(/\[[^\]]*\]/g, '') // remove [...]
+        .replace(/〔[^〕]*〕/g, '') // remove 〔...〕
+        .replace(/★[^★]*★/g, '')   // remove ★...★
+        .replace(/※[^※]*※/g, '')   // remove ※...※
+        .trim();
+
       return {
         code: barcode,
-        name: baseInfo.name,
+        name: cleanNamePartial,
         image: baseInfo.image,
         score: null,
         category: baseInfo.category || 'Unknown Category',
