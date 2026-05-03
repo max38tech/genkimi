@@ -44,7 +44,8 @@ const axios_1 = __importDefault(require("axios"));
 admin.initializeApp();
 exports.rakutenSearch = (0, https_1.onCall)({
     cors: true,
-    region: "us-central1"
+    region: "us-central1",
+    invoker: "public"
 }, async (request) => {
     var _a, _b, _c;
     logger.info(">>> Rakuten Search Function Triggered <<<");
