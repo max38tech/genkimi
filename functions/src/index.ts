@@ -50,6 +50,10 @@ export const rakutenSearch = onCall({
         keyword: barcode,
         format: "json",
         hits: 10
+      },
+      headers: {
+        "Origin": "https://us-central1-genkimi-app.cloudfunctions.net",
+        "Referer": "https://us-central1-genkimi-app.cloudfunctions.net/"
       }
     });
 

@@ -70,6 +70,10 @@ exports.rakutenSearch = (0, https_1.onCall)({
                 keyword: barcode,
                 format: "json",
                 hits: 10
+            },
+            headers: {
+                "Origin": "https://us-central1-genkimi-app.cloudfunctions.net",
+                "Referer": "https://us-central1-genkimi-app.cloudfunctions.net/"
             }
         });
         const items = response.data.Items || [];
