@@ -175,43 +175,18 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
       return 'caution';
     };
 
-    if (rakutenProduct) {
-      // If we have Rakuten data, let's try to use it primarily for testing
-      let ingredientsList: Ingredient[] = [];
-      if (rakutenProduct.ingredients) {
-        // Simple split for now to see what we get
-        ingredientsList = rakutenProduct.ingredients.split(/[、,。\n]/).map((text: string, index: number) => {
-          const name = text.trim();
-          return {
-            id: `rakuten-${index}`,
-            name: name,
-            safety: getSafetyLevel(name)
-          };
-        }).filter((i: any) => i.name.length > 1 && i.name.length < 50);
-      }
-
-      const cleanNameRakuten = rakutenProduct.name
-        .replace(/【[^】]*】/g, '') // remove 【...】
-        .replace(/\[[^\]]*\]/g, '') // remove [...]
-        .replace(/〔[^〕]*〕/g, '') // remove 〔...〕
-        .replace(/★[^★]*★/g, '')   // remove ★...★
-        .replace(/※[^※]*※/g, '')   // remove ※...※
-        .trim();
-
-      return {
-        code: barcode,
-        name: cleanNameRakuten,
-        image: rakutenProduct.image,
-        score: offProduct ? 50 : null, // Still use OFF for score if available, otherwise null
-        category: 'Rakuten Product',
-        ingredients: ingredientsList,
-        alternatives: [],
-        isPartialData: !offProduct
-      };
+    if (rakutenProduct && rakutenProduct.ingredients) {
+      ingredientsList = rakutenProduct.ingredients.split(/[、,。\n]/).map((text: string, index: number) => {
+        const name = text.trim();
+        return {
+          id: `rakuten-${index}`,
+          name: name,
+          safety: getSafetyLevel(name)
+        };
+      }).filter((i: any) => i.name.length > 1 && i.name.length < 50);
     }
 
     if (offProduct) {
-      // Calculate a more accurate score based on nutriscore, nova group, or ecoscore
       // Extract best category first so we can use it for heuristic scoring
       const categoryStr = offProduct.categories || offProduct.categories_tags?.join(', ') || baseInfo.category || 'Unknown Category';
       const mainCategory = categoryStr.split(',')[0].replace(/en:/g, '').replace(/ja:/g, '').replace(/-/g, ' ').trim();
@@ -222,10 +197,6 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
       let hasRealScore = false;
       
       if (offProduct.nutriscore_score !== undefined) {
-        // Nutriscore is -15 (best) to 40 (worst). 
-        // We want 40 to be around 10-15/100 instead of 0, and -15 to be 100/100.
-        // Old math: 100 - ((score + 15) * 2)
-        // New math: (40 - score) / 55 * 90 + 10 (so worst is 10, best is 100)
         calculatedScore = Math.max(0, Math.min(100, Math.round(((40 - offProduct.nutriscore_score) / 55) * 90 + 10)));
         hasRealScore = true;
       } else if (offProduct.nutriscore_grade) {
@@ -241,55 +212,47 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
          hasRealScore = true;
       }
 
-      // Parse actual ingredients
-      let ingredientsList: Ingredient[] = [];
-      const getSafetyLevel = (name: string): 'safe' | 'caution' | 'warning' => {
-        const n = name.toLowerCase();
-        const warnings = ['sugar', 'syrup', 'sucrose', 'fructose', 'glucose', 'dextrose', 'maltodextrin', 'aspartame', 'sucralose', 'saccharin', 'acesulfame', 'artificial', 'color', 'dye', 'preservative', 'bht', 'bha', 'hydrogenated', 'msg', 'monosodium glutamate', 'nitrate', 'nitrite', 'アセスルファム', 'スクラロース', '砂糖', '果糖', 'ブドウ糖', '香料', '着色料', '保存料', '乳化剤', 'ショートニング', 'マーガリン'];
-        const safes = ['almond', 'peanut', 'walnut', 'pecan', 'cashew', 'macadamia', 'hazelnut', 'nut', 'seed', 'chia', 'flax', 'hemp', 'oat', 'whole wheat', 'brown rice', 'quinoa', 'vegetable', 'fruit', 'berry', 'apple', 'orange', 'banana', 'アーモンド', 'ピーナッツ', 'くるみ', 'ナッツ', 'オーツ麦', '全粒粉', '玄米', '野菜', '果物'];
-        
-        if (warnings.some(w => n.includes(w))) return 'warning';
-        if (safes.some(s => n.includes(s))) return 'safe';
-        return 'caution';
-      };
-
-      if (offProduct.ingredients && offProduct.ingredients.length > 0) {
-        ingredientsList = offProduct.ingredients.map((i: any, index: number) => {
-          const name = i.text || i.id?.replace(/en:/g, '').replace(/ja:/g, '').replace(/-/g, ' ') || 'Unknown Ingredient';
-          return {
-            id: index.toString(),
-            name: name,
-            safety: getSafetyLevel(name)
-          };
-        });
-      } else if (offProduct.ingredients_tags && offProduct.ingredients_tags.length > 0) {
-        ingredientsList = offProduct.ingredients_tags.map((tag: string, index: number) => {
-           const name = tag.replace(/^[a-z]{2}:/, '').replace(/-/g, ' ').replace(/_/g, ' ');
-           return {
-             id: index.toString(),
-             name: name,
-             safety: getSafetyLevel(name)
-           };
-        }).filter((i: any) => i.name.length > 0);
-      } else {
-        const ingredientsText = offProduct.ingredients_text_en || offProduct.ingredients_text_ja || offProduct.ingredients_text || '';
-        if (ingredientsText) {
-           ingredientsList = ingredientsText.split(/[,、]/).map((text: string, index: number) => {
-             const name = text.trim().replace(/^\*+|\*+$/g, '');
+      // If Rakuten didn't give us ingredients, try parsing OFF ingredients
+      if (ingredientsList.length === 0) {
+        if (offProduct.ingredients && offProduct.ingredients.length > 0) {
+          ingredientsList = offProduct.ingredients.map((i: any, index: number) => {
+            const name = i.text || i.id?.replace(/en:/g, '').replace(/ja:/g, '').replace(/-/g, ' ') || 'Unknown Ingredient';
+            return {
+              id: index.toString(),
+              name: name,
+              safety: getSafetyLevel(name)
+            };
+          });
+        } else if (offProduct.ingredients_tags && offProduct.ingredients_tags.length > 0) {
+          ingredientsList = offProduct.ingredients_tags.map((tag: string, index: number) => {
+             const name = tag.replace(/^[a-z]{2}:/, '').replace(/-/g, ' ').replace(/_/g, ' ');
              return {
                id: index.toString(),
                name: name,
                safety: getSafetyLevel(name)
              };
-           }).filter((i: any) => i.name.length > 0);
+          }).filter((i: any) => i.name.length > 0);
+        } else {
+          const ingredientsText = offProduct.ingredients_text_en || offProduct.ingredients_text_ja || offProduct.ingredients_text || '';
+          if (ingredientsText) {
+             ingredientsList = ingredientsText.split(/[,、]/).map((text: string, index: number) => {
+               const name = text.trim().replace(/^\*+|\*+$/g, '');
+               return {
+                 id: index.toString(),
+                 name: name,
+                 safety: getSafetyLevel(name)
+               };
+             }).filter((i: any) => i.name.length > 0);
+          }
         }
+
+        // Clean up capitalization for OFF ingredients
+        ingredientsList = ingredientsList.map(i => ({
+          ...i,
+          name: i.name ? i.name.charAt(0).toUpperCase() + i.name.slice(1) : 'Unknown'
+        }));
       }
 
-      // Clean up capitalization
-      ingredientsList = ingredientsList.map(i => ({
-        ...i,
-        name: i.name ? i.name.charAt(0).toUpperCase() + i.name.slice(1) : 'Unknown'
-      }));
 
       // If no official score, calculate a granular score using NOVA Classification System logic based on ingredients
       if (!hasRealScore) {
@@ -366,7 +329,7 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
         image: baseInfo.image,
         score: null,
         category: baseInfo.category || 'Unknown Category',
-        ingredients: [], // No ingredients if we only have Yahoo
+        ingredients: ingredientsList,
         alternatives: [],
         isPartialData: true
       };
