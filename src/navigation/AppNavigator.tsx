@@ -11,46 +11,46 @@ import { colors } from '../theme/colors';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const ScannerStack = () => {
+const TabNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Scanner" component={ScannerScreen} />
-      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-    </Stack.Navigator>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textLight,
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === 'Scan') {
+            return <ScanLine color={color} size={size} />;
+          } else if (route.name === 'History') {
+            return <History color={color} size={size} />;
+          }
+        },
+        tabBarStyle: {
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          paddingBottom: 5,
+          paddingTop: 5,
+          height: 60,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+        }
+      })}
+    >
+      <Tab.Screen name="Scan" component={ScannerScreen} />
+      <Tab.Screen name="History" component={HistoryScreen} />
+    </Tab.Navigator>
   );
 };
 
 export const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.textLight,
-          tabBarIcon: ({ color, size }) => {
-            if (route.name === 'Scan') {
-              return <ScanLine color={color} size={size} />;
-            } else if (route.name === 'History') {
-              return <History color={color} size={size} />;
-            }
-          },
-          tabBarStyle: {
-            borderTopWidth: 1,
-            borderTopColor: colors.border,
-            paddingBottom: 5,
-            paddingTop: 5,
-            height: 60,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: '500',
-          }
-        })}
-      >
-        <Tab.Screen name="Scan" component={ScannerStack} />
-        <Tab.Screen name="History" component={HistoryScreen} />
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="MainTabs" component={TabNavigator} />
+        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
