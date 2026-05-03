@@ -241,23 +241,11 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
          hasRealScore = true;
       }
 
-      // If no official score, apply category-based heuristics
-      if (!hasRealScore) {
-        const lowerCategory = categoryStr.toLowerCase();
-        if (lowerCategory.includes('candy') || lowerCategory.includes('chocolate') || lowerCategory.includes('sweets') || lowerCategory.includes('dessert') || lowerCategory.includes('confectioneries')) {
-          calculatedScore = 25; // Default penalty for sweets
-        } else if (lowerCategory.includes('snack') || lowerCategory.includes('chips')) {
-          calculatedScore = 40; // Default penalty for snacks
-        } else if (lowerCategory.includes('vegetable') || lowerCategory.includes('fruit') || lowerCategory.includes('nuts')) {
-          calculatedScore = 80; // Default boost for healthy categories
-        }
-      }
-
       // Parse actual ingredients
       let ingredientsList: Ingredient[] = [];
       const getSafetyLevel = (name: string): 'safe' | 'caution' | 'warning' => {
         const n = name.toLowerCase();
-        const warnings = ['sugar', 'syrup', 'sucrose', 'fructose', 'glucose', 'dextrose', 'maltodextrin', 'aspartame', 'sucralose', 'saccharin', 'acesulfame', 'artificial', 'color', 'dye', 'preservative', 'bht', 'bha', 'hydrogenated', 'msg', 'monosodium glutamate', 'nitrate', 'nitrite', 'アセスルファム', 'スクラロース', '砂糖', '果糖', 'ブドウ糖', '香料', '着色料', '保存料'];
+        const warnings = ['sugar', 'syrup', 'sucrose', 'fructose', 'glucose', 'dextrose', 'maltodextrin', 'aspartame', 'sucralose', 'saccharin', 'acesulfame', 'artificial', 'color', 'dye', 'preservative', 'bht', 'bha', 'hydrogenated', 'msg', 'monosodium glutamate', 'nitrate', 'nitrite', 'アセスルファム', 'スクラロース', '砂糖', '果糖', 'ブドウ糖', '香料', '着色料', '保存料', '乳化剤', 'ショートニング', 'マーガリン'];
         const safes = ['almond', 'peanut', 'walnut', 'pecan', 'cashew', 'macadamia', 'hazelnut', 'nut', 'seed', 'chia', 'flax', 'hemp', 'oat', 'whole wheat', 'brown rice', 'quinoa', 'vegetable', 'fruit', 'berry', 'apple', 'orange', 'banana', 'アーモンド', 'ピーナッツ', 'くるみ', 'ナッツ', 'オーツ麦', '全粒粉', '玄米', '野菜', '果物'];
         
         if (warnings.some(w => n.includes(w))) return 'warning';
@@ -303,10 +291,43 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
         name: i.name ? i.name.charAt(0).toUpperCase() + i.name.slice(1) : 'Unknown'
       }));
 
-      // Heuristic: If first ingredient is sugar/syrup and no official score, penalize further
-      if (!hasRealScore && ingredientsList.length > 0) {
-        if (ingredientsList[0].safety === 'warning' && (ingredientsList[0].name.toLowerCase().includes('sugar') || ingredientsList[0].name.toLowerCase().includes('syrup') || ingredientsList[0].name.includes('砂糖'))) {
-          calculatedScore = Math.min(calculatedScore, 20);
+      // If no official score, calculate a granular score using NOVA Classification System logic based on ingredients
+      if (!hasRealScore) {
+        if (ingredientsList.length > 0) {
+          const group4Markers = ['artificial', 'flavor', 'colour', 'color', 'dye', 'emulsifier', 'lecithin', 'preservative', 'hydrogenated', 'margarine', 'high fructose', 'syrup', 'isolate', 'extract', 'maltodextrin', 'dextrose', 'sweetener', 'sucralose', 'aspartame', 'acesulfame', 'msg', 'glutamate', 'nitrite', 'nitrate', 'bha', 'bht', '香料', '着色料', '保存料', '乳化剤', 'ショートニング', 'マーガリン', '人工', '甘味料', 'スクラロース', 'アセスルファム'];
+          const group2Markers = ['sugar', 'salt', 'oil', 'butter', 'honey', 'syrup', '砂糖', '塩', '油', 'バター', 'はちみつ', 'シロップ'];
+          
+          let hasGroup4 = false;
+          let hasGroup2 = false;
+          let group4Count = 0;
+
+          for (const ing of ingredientsList) {
+            const name = ing.name.toLowerCase();
+            if (group4Markers.some(m => name.includes(m))) {
+              hasGroup4 = true;
+              group4Count++;
+            } else if (group2Markers.some(m => name.includes(m))) {
+              hasGroup2 = true;
+            }
+          }
+
+          if (hasGroup4) {
+            // NOVA Group 4: Ultra-processed. Score drops further based on number of industrial additives.
+            calculatedScore = Math.max(10, 40 - (group4Count * 5)); 
+          } else if (hasGroup2) {
+            // NOVA Group 3: Processed (added sugar, salt, or fat, but no industrial additives).
+            if (ingredientsList[0] && (ingredientsList[0].name.toLowerCase().includes('sugar') || ingredientsList[0].name.includes('砂糖'))) {
+              calculatedScore = 45; // Penalize if sugar is the main ingredient
+            } else {
+              calculatedScore = 65;
+            }
+          } else {
+            // NOVA Group 1: Unprocessed / Minimally processed (No added salt, sugar, oil, or additives).
+            calculatedScore = 90;
+          }
+        } else {
+          // No ingredients and no score. We don't know anything.
+          calculatedScore = null as any; // Typecast to satisfy let calculatedScore = 50
         }
       }
 
@@ -327,7 +348,7 @@ export const fetchProductData = async (barcode: string): Promise<ProductData> =>
         category: mainCategoryFormatted,
         ingredients: ingredientsList,
         alternatives: [],
-        isPartialData: false
+        isPartialData: calculatedScore === null
       };
     } else {
       // Partial Data State (e.g. only Yahoo results found)

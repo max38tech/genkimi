@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getHistory, HistoryItem } from '../store/historyStore';
+import { getHistory, HistoryItem, clearHistory } from '../store/historyStore';
 import { ScoreBadge } from '../components/ScoreBadge';
 import { colors, spacing, typography } from '../theme/colors';
 import { Clock } from 'lucide-react-native';
@@ -26,6 +26,24 @@ export const HistoryScreen = () => {
     setRefreshing(true);
     await loadHistory();
     setRefreshing(false);
+  };
+
+  const handleClearHistory = () => {
+    Alert.alert(
+      "Clear History",
+      "Are you sure you want to delete all your scanned items? This cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Clear All", 
+          style: "destructive",
+          onPress: async () => {
+            await clearHistory();
+            setHistory([]);
+          }
+        }
+      ]
+    );
   };
 
   const renderItem = ({ item }: { item: HistoryItem }) => {
@@ -58,6 +76,11 @@ export const HistoryScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Scan History</Text>
+        {history.length > 0 && (
+          <TouchableOpacity onPress={handleClearHistory} style={styles.clearButton}>
+            <Text style={styles.clearButtonText}>Clear</Text>
+          </TouchableOpacity>
+        )}
       </View>
       
       {history.length === 0 ? (
@@ -93,11 +116,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold,
     color: colors.text,
+  },
+  clearButton: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+  },
+  clearButtonText: {
+    color: colors.primary,
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.medium,
   },
   listContainer: {
     padding: spacing.md,
