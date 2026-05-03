@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { ArrowLeft, ChevronRight } from 'lucide-react-native';
 import { fetchProductData, ProductData } from '../api/scannerService';
@@ -98,8 +98,19 @@ export const ProductDetailScreen = () => {
             <View style={styles.upsellContainer}>
               <Text style={styles.upsellTitle}>Health Analysis Unavailable</Text>
               <Text style={styles.upsellText}>
-                We found this product's ingredients, but health scoring is unavailable. Upgrade to Premium to analyze these ingredients with AI.
+                We found this product, but official health scoring is unavailable. You can search the web for ingredients, or upgrade to Premium to analyze the product with AI.
               </Text>
+              
+              <TouchableOpacity 
+                style={styles.secondaryButton}
+                onPress={() => {
+                  const query = encodeURIComponent(`${product.name} 原材料`);
+                  Linking.openURL(`https://www.google.com/search?q=${query}`);
+                }}
+              >
+                <Text style={styles.secondaryButtonText}>🔍 Search Web for Ingredients</Text>
+              </TouchableOpacity>
+              
               <TouchableOpacity style={styles.premiumButton}>
                 <Text style={styles.premiumButtonText}>✨ Analyze with AI (Premium)</Text>
               </TouchableOpacity>
@@ -299,6 +310,22 @@ const styles = StyleSheet.create({
   },
   premiumButtonText: {
     color: '#fff',
+    fontWeight: typography.weights.bold,
+    fontSize: typography.sizes.md,
+  },
+  secondaryButton: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#D81B60',
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: 25,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  secondaryButtonText: {
+    color: '#D81B60',
     fontWeight: typography.weights.bold,
     fontSize: typography.sizes.md,
   }
